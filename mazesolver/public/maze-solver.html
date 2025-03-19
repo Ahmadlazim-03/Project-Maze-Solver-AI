@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maze Game with Path Tree</title>
+    <script src="https://unpkg.com/vis-network@9.1.2/dist/vis-network.min.js"></script>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: row;
+            min-height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #2c3e50, #4ca1af);
+            font-family: 'Poppins', sans-serif;
+            color: white;
+        }
+        
+        /* Back Button Styling (Centered at the bottom) */
+        #back-button {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 8px 12px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            background: #000000;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            transition: 0.3s;
+        }
+    
+        #back-button:hover {
+            background: #e67e22;
+            transform: translateX(-50%) scale(1.05);
+        }
+    
+        #game-container {
+            text-align: center;
+            width: 100%;
+            max-width: 420px;
+            margin: 20px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        #maze {
+            display: grid;
+            grid-template-columns: repeat(5, minmax(50px, 80px));
+            gap: 4px;
+            width: 100%;
+            max-width: 420px;
+            margin: 0 auto;
+        }
+        
+        .cell {
+            position: relative;
+            width: 100%;
+            padding-bottom: 100%;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            font-size: clamp(12px, 2vw, 18px);
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .cell:hover {
+            transform: scale(1.1);
+        }
+        
+        .cell span {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%;
+            text-align: center;
+        }
+        
+        .start { background: #27ae60; color: white; }
+        .end { background: #e74c3c; color: white; }
+        .obstacle { background: #2c3e50; color: white; }
+        .player { background: #2980b9; color: white; }
+        .trail { background: #f1c40f; color: black; }
+        
+        #controls {
+            margin-top: 20px;
+        }
+        
+        button {
+            padding: clamp(8px, 2vw, 12px) clamp(12px, 3vw, 18px);
+            font-size: clamp(12px, 2vw, 16px);
+            font-weight: bold;
+            margin: 5px;
+            cursor: pointer;
+            background: #f39c12;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            transition: 0.3s;
+        }
+        
+        button:hover {
+            background: #e67e22;
+        }
+        
+        button.active {
+            transform: scale(1.05);
+            box-shadow: 0 0 10px rgba(39, 174, 96, 0.7);
+        }
+        
+        #message {
+            margin-top: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            font-size: clamp(14px, 2.5vw, 18px);
+            color: white;
+        }
+    
+        .path-card {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 8px;
+            padding: 10px 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: transform 0.2s;
+            cursor: pointer;
+        }
+    
+        .path-card:hover {
+            transform: translateY(-3px);
+        }
+    
+        .path-card.active {
+            background: #27ae60;
+            transform: translateY(-3px);
+            box-shadow: 0 0 10px rgba(39, 174, 96, 0.7);
+        }
+    
+        .path-card h3 {
+            margin: 0 0 5px 0;
+            font-size: clamp(14px, 2vw, 16px);
+            color: #f1c40f;
+        }
+    
+        .path-card p {
+            margin: 0;
+            font-size: clamp(12px, 1.8vw, 14px);
+            color: white;
+        }
+        
+        #graph-container {
+            width: 100%;
+            max-width: 500px;
+            height: clamp(300px, 50vw, 500px);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            margin: 20px;
+        }
+    
+        @media screen and (max-width: 768px) {
+            body {
+                flex-direction: column;
+            }
+            
+            #game-container {
+                margin: 10px;
+                padding: 15px;
+            }
+            
+            #maze {
+                grid-template-columns: repeat(5, minmax(40px, 1fr));
+                gap: 2px;
+            }
+            
+            #graph-container {
+                max-width: 100%;
+                height: clamp(250px, 40vw, 400px);
+            }
+            
+            button {
+                margin: 5px 2px;
+            }
+    
+            .path-card {
+                padding: 8px 12px;
+            }
+    
+            #back-button {
+                
+                bottom: 10px;
+                padding: 6px 10px;
+                font-size: 14px;
+            }
+        }
+    
+        @media screen and (max-width: 480px) {
+            #maze {
+                grid-template-columns: repeat(5, minmax(30px, 1fr));
+            }
+            
+            .cell {
+                font-size: clamp(10px, 1.5vw, 14px);
+            }
+            
+            button {
+                padding: clamp(12px, 3vw, 16px) clamp(14px, 4vw, 18px);
+                font-size: clamp(14px, 3vw, 16px);
+                margin: 4px;
+                min-width: 90px;
+            }
+            
+            #message {
+                font-size: clamp(12px, 2vw, 16px);
+            }
+    
+            .path-card h3 {
+                font-size: clamp(12px, 1.8vw, 14px);
+            }
+    
+            .path-card p {
+                font-size: clamp(10px, 1.5vw, 12px);
+            }
+    
+            #back-button {
+              
+                bottom: 8px;
+                padding: 5px 8px;
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="game-container">
+        <div id="maze"></div>
+        <div id="controls">
+            <button onclick="runMaze()">Run Fast Path</button>
+            <button onclick="solveMaze()">Create Graph</button>
+            <button onclick="resetMaze()">Reset</button>
+        </div>
+        <div id="message"></div>
+    </div>
+    <div id="graph-container"></div>
+    
+    <button id="back-button" onclick="history.back()">Back</button>
+    <script>
+        const ROWS = 5, COLS = 5;
+        let maze = Array(ROWS).fill().map(() => Array(COLS).fill('.'));
+        const initialObstacles = [5, 6, 8, 9, 16, 17, 19];
+        let playerPos = [0, 0];
+        let pathIndex = 0;
+        let allPaths = [];
+        let shortestPaths = [];
+        let trail = new Set();
+        let activePathIndex = -1;
+
+        function initMaze() {
+            maze[0][0] = 'S';
+            maze[4][4] = 'E';
+            initialObstacles.forEach(num => {
+                const row = Math.floor(num / COLS);
+                const col = num % COLS;
+                maze[row][col] = '#';
+            });
+            renderMaze();
+        }
+
+        function renderMaze() {
+            const mazeDiv = document.getElementById('maze');
+            mazeDiv.innerHTML = '';
+            let num = 1;
+            for (let i = 0; i < ROWS; i++) {
+                for (let j = 0; j < COLS; j++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'cell';
+                    const span = document.createElement('span');
+                    span.textContent = num++;
+                    cell.appendChild(span);
+                    if (maze[i][j] === 'S') cell.classList.add('start');
+                    else if (maze[i][j] === 'E') cell.classList.add('end');
+                    else if (maze[i][j] === '#') cell.classList.add('obstacle');
+                    if (trail.has(`${i},${j}`)) cell.classList.add('trail');
+                    if (playerPos[0] === i && playerPos[1] === j) cell.classList.add('player');
+                    cell.addEventListener('click', () => handleCellClick(i, j));
+                    mazeDiv.appendChild(cell);
+                }
+            }
+        }
+
+        function handleCellClick(i, j) {
+            if (i === 0 && j === 0) return;
+            if (i === 4 && j === 4) return;
+            if (maze[i][j] === '.') {
+                maze[i][j] = '#';
+            } else if (maze[i][j] === '#') {
+                maze[i][j] = '.';
+            }
+            renderMaze();
+        }
+
+        function findAllPaths() {
+            const start = [0, 0], end = [4, 4];
+            const visited = new Set();
+            allPaths = [];
+
+            function dfs(x, y, path) {
+                if (x === end[0] && y === end[1]) {
+                    allPaths.push([...path]);
+                    return;
+                }
+
+                const directions = [[-1, 0], [1, 0], [0, -1], [0, 1]];
+                for (const [dx, dy] of directions) {
+                    const nx = x + dx, ny = y + dy;
+                    const nodeNum = nx * COLS + ny + 1;
+                    if (nx >= 0 && nx < ROWS && ny >= 0 && ny < COLS && 
+                        maze[nx][ny] !== '#' && !visited.has(nodeNum)) {
+                        visited.add(nodeNum);
+                        path.push([nx, ny]);
+                        dfs(nx, ny, path);
+                        path.pop();
+                        visited.delete(nodeNum);
+                    }
+                }
+            }
+
+            visited.add(1);
+            dfs(0, 0, [[0, 0]]);
+            return allPaths;
+        }
+
+        function findShortestPathLength() {
+            const start = [0, 0], end = [4, 4];
+            const queue = [[start, 1]];
+            const visited = new Set();
+            visited.add('0,0');
+            let shortestLength = Infinity;
+
+            while (queue.length) {
+                const [[x, y], length] = queue.shift();
+                if (x === end[0] && y === end[1]) {
+                    shortestLength = length;
+                    break;
+                }
+
+                const directions = [[-1, 0], [1, 0], [0, -1], [0, 1]];
+                for (const [dx, dy] of directions) {
+                    const nx = x + dx, ny = y + dy;
+                    const key = `${nx},${ny}`;
+                    if (nx >= 0 && nx < ROWS && ny >= 0 && ny < COLS && 
+                        maze[nx][ny] !== '#' && !visited.has(key)) {
+                        visited.add(key);
+                        queue.push([[nx, ny], length + 1]);
+                    }
+                }
+            }
+
+            return shortestLength;
+        }
+
+        function findShortestPathAndLevels() {
+            const shortestLength = findShortestPathLength();
+            if (shortestLength === Infinity) {
+                const messageDiv = document.getElementById('message');
+                messageDiv.innerHTML = '';
+                const card = document.createElement('div');
+                card.className = 'path-card';
+                card.innerHTML = `<p>No path found!</p>`;
+                messageDiv.appendChild(card);
+                return { paths: [], levels: new Map(), reachableNodes: new Set() };
+            }
+
+            const start = [0, 0], end = [4, 4];
+            const queue = [[start, [start]]];
+            const visited = new Map();
+            const levels = new Map();
+            const reachableNodes = new Set();
+            shortestPaths = [];
+
+            levels.set('0,0', 0);
+            visited.set('0,0', 0);
+            reachableNodes.add(1);
+
+            while (queue.length) {
+                const [[x, y], path] = queue.shift();
+                const currentLevel = levels.get(`${x},${y}`);
+
+                if (x === end[0] && y === end[1]) {
+                    if (path.length === shortestLength) {
+                        shortestPaths.push(path);
+                    }
+                    continue;
+                }
+
+                if (path.length >= shortestLength) continue;
+
+                const directions = [[-1, 0], [1, 0], [0, -1], [0, 1]];
+                for (const [dx, dy] of directions) {
+                    const nx = x + dx, ny = y + dy;
+                    const key = `${nx},${ny}`;
+                    const nodeNum = nx * COLS + ny + 1;
+                    if (nx >= 0 && nx < ROWS && ny >= 0 && ny < COLS && maze[nx][ny] !== '#') {
+                        const newLevel = currentLevel + 1;
+                        if (!visited.has(key) || visited.get(key) === newLevel) {
+                            queue.push([[nx, ny], [...path, [nx, ny]]]);
+                            if (!visited.has(key)) {
+                                visited.set(key, newLevel);
+                                levels.set(key, newLevel);
+                                reachableNodes.add(nodeNum);
+                            }
+                        }
+                    }
+                }
+            }
+
+            const messageDiv = document.getElementById('message');
+            messageDiv.innerHTML = '';
+
+            if (shortestPaths.length > 0) {
+                shortestPaths.forEach((path, index) => {
+                    const route = path.map(p => p[0] * COLS + p[1] + 1).join(' → ');
+                    const card = document.createElement('div');
+                    card.className = 'path-card';
+                    card.innerHTML = `
+                        <h3>Path ${index + 1}</h3>
+                        <p>${route}</p>
+                    `;
+                    card.addEventListener('click', () => {
+                        // Remove active class from all path cards
+                        document.querySelectorAll('.path-card').forEach(c => c.classList.remove('active'));
+                        // Add active class to the clicked card
+                        card.classList.add('active');
+                        animatePath(path);
+                        setActivePath(index);
+                    });
+                    messageDiv.appendChild(card);
+                });
+            } else {
+                const card = document.createElement('div');
+                card.className = 'path-card';
+                card.innerHTML = `<p>No path found!</p>`;
+                messageDiv.appendChild(card);
+            }
+
+            return { paths: shortestPaths, levels, reachableNodes };
+        }
+
+        function visualizeGraph() {
+            const nodes = new vis.DataSet();
+            const edges = new vis.DataSet();
+
+            const obstacleSet = new Set();
+            for (let i = 0; i < ROWS; i++) {
+                for (let j = 0; j < COLS; j++) {
+                    if (maze[i][j] === '#') {
+                        const nodeNum = i * COLS + j + 1;
+                        obstacleSet.add(nodeNum);
+                    }
+                }
+            }
+
+            const { paths: shortestPaths, levels, reachableNodes } = findShortestPathAndLevels();
+
+            const nodesOnPath = new Set();
+            allPaths.forEach(path => {
+                path.forEach(([row, col]) => {
+                    const nodeNum = row * COLS + col + 1;
+                    nodesOnPath.add(nodeNum);
+                });
+            });
+
+            for (let i = 1; i <= 25; i++) {
+                if (!obstacleSet.has(i) && reachableNodes.has(i) && nodesOnPath.has(i)) {
+                    const row = Math.floor((i - 1) / COLS);
+                    const col = (i - 1) % COLS;
+                    const key = `${row},${col}`;
+                    const level = levels.get(key) || 0;
+                    const color = i === 1 ? '#00ff00' : i === 25 ? '#ff0000' : '#87ceeb';
+                    nodes.add({
+                        id: i,
+                        label: `${i}`,
+                        level: level,
+                        color: {
+                            background: color,
+                            border: '#333333',
+                            highlight: { background: color, border: '#333333' }
+                        },
+                        shape: 'circle',
+                        size: 30,
+                        font: { size: 16, color: '#000000' },
+                        shadow: { enabled: true, size: 10, x: 5, y: 5 }
+                    });
+                }
+            }
+
+            allPaths.forEach((path, pathIndex) => {
+                for (let i = 0; i < path.length - 1; i++) {
+                    const from = path[i][0] * COLS + path[i][1] + 1;
+                    const to = path[i + 1][0] * COLS + path[i + 1][1] + 1;
+                    if (!obstacleSet.has(from) && !obstacleSet.has(to) && 
+                        nodesOnPath.has(from) && nodesOnPath.has(to)) {
+                        const edgeId = `edge-${from}-${to}-${pathIndex}`;
+                        if (!edges.get(edgeId)) {
+                            edges.add({
+                                id: edgeId,
+                                from: from,
+                                to: to,
+                                color: { color: '#666666', highlight: '#666666' },
+                                width: 1.5
+                            });
+                        }
+                    }
+                }
+            });
+
+            if (shortestPaths.length > 0) {
+                shortestPaths.forEach((path) => {
+                    for (let i = 0; i < path.length - 1; i++) {
+                        const from = path[i][0] * COLS + path[i][1] + 1;
+                        const to = path[i + 1][0] * COLS + path[i + 1][1] + 1;
+                        if (!obstacleSet.has(from) && !obstacleSet.has(to)) {
+                            const edgeId = edges.getIds().find(id => {
+                                const edge = edges.get(id);
+                                return (edge.from === from && edge.to === to) || (edge.from === to && edge.to === from);
+                            });
+                            if (edgeId) {
+                                edges.update({
+                                    id: edgeId,
+                                    color: { color: '#0000ff', highlight: '#0000ff' },
+                                    width: 3
+                                });
+                            }
+                        }
+                    }
+                });
+            }
+
+            const container = document.getElementById('graph-container');
+            const data = { nodes: nodes, edges: edges };
+            const options = {
+                layout: {
+                    hierarchical: {
+                        direction: 'UD',
+                        sortMethod: 'directed',
+                        nodeSpacing: 100,
+                        levelSeparation: 80
+                    }
+                },
+                nodes: {
+                    shape: 'circle',
+                    scaling: {
+                        min: 20,
+                        max: 30
+                    }
+                },
+                edges: {
+                    arrows: { to: { enabled: true, scaleFactor: 1 } },
+                    smooth: { enabled: false }
+                },
+                physics: {
+                    enabled: false
+                }
+            };
+            const network = new vis.Network(container, data, options);
+            network.fit();
+        }
+
+        function solveMaze() {
+            findAllPaths();
+            findShortestPathAndLevels();
+            visualizeGraph();
+        }
+
+        function runMaze() {
+            if (shortestPaths.length === 0) {
+                findAllPaths();
+                findShortestPathAndLevels();
+            }
+            if (shortestPaths.length > 0) {
+                const pathToRun = activePathIndex !== -1 ? shortestPaths[activePathIndex] : shortestPaths[0];
+                animatePath(pathToRun);
+            } else {
+                const messageDiv = document.getElementById('message');
+                messageDiv.innerHTML = '';
+                const card = document.createElement('div');
+                card.className = 'path-card';
+                card.innerHTML = `<p>No path found!</p>`;
+                messageDiv.appendChild(card);
+            }
+        }
+
+        function animatePath(selectedPath) {
+            playerPos = [0, 0];
+            trail.clear();
+            pathIndex = 0;
+
+            function step() {
+                if (pathIndex < selectedPath.length) {
+                    trail.add(`${playerPos[0]},${playerPos[1]}`);
+                    playerPos = [selectedPath[pathIndex][0], selectedPath[pathIndex][1]];
+                    pathIndex++;
+                    renderMaze();
+                    setTimeout(step, 200);
+                }
+            }
+
+            step();
+        }
+
+        function setActivePath(index) {
+            activePathIndex = index;
+            const runButton = document.querySelector('button[onclick="runMaze()"]');
+            runButton.classList.remove('active');
+            runButton.classList.add('active');
+            runButton.textContent = `Run Path ${index + 1}`;
+        }
+
+        function resetMaze() {
+            maze = Array(ROWS).fill().map(() => Array(COLS).fill('.'));
+            playerPos = [0, 0];
+            pathIndex = 0;
+            allPaths = [];
+            shortestPaths = [];
+            trail.clear();
+            activePathIndex = -1;
+            const runButton = document.querySelector('button[onclick="runMaze()"]');
+            runButton.classList.remove('active');
+            runButton.textContent = 'Run Fast Path';
+            // Remove active class from all path cards
+            document.querySelectorAll('.path-card').forEach(card => card.classList.remove('active'));
+            initMaze();
+            document.getElementById('message').innerHTML = '';
+            document.getElementById('graph-container').innerHTML = '';
+        }
+
+        document.addEventListener('keydown', (e) => {
+            const [x, y] = playerPos;
+            switch (e.key) {
+                case 'ArrowUp': 
+                    if (x > 0 && maze[x-1][y] !== '#') {
+                        trail.add(`${playerPos[0]},${playerPos[1]}`);
+                        playerPos = [x-1, y];
+                    }
+                    break;
+                case 'ArrowDown': 
+                    if (x < ROWS-1 && maze[x+1][y] !== '#') {
+                        trail.add(`${playerPos[0]},${playerPos[1]}`);
+                        playerPos = [x+1, y];
+                    }
+                    break;
+                case 'ArrowLeft': 
+                    if (y > 0 && maze[x][y-1] !== '#') {
+                        trail.add(`${playerPos[0]},${playerPos[1]}`);
+                        playerPos = [x, y-1];
+                    }
+                    break;
+                case 'ArrowRight': 
+                    if (y < COLS-1 && maze[x][y+1] !== '#') {
+                        trail.add(`${playerPos[0]},${playerPos[1]}`);
+                        playerPos = [x, y+1];
+                    }
+                    break;
+                case ' ': 
+                    solveMaze(); 
+                    break;
+            }
+            renderMaze();
+        });
+
+        initMaze();
+    </script>
+</body>
+</html>
