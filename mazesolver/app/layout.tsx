@@ -31,8 +31,8 @@ const raleway = Raleway({
 });
 
 export const metadata: Metadata = {
-  title: 'OnePage Bootstrap Template',
-  description: 'A multipurpose Bootstrap template by BootstrapMade',
+  title: 'Maze Solver Kelompok 1',
+  description: 'Project AI by Kelompok 1',
 };
 
 export default function RootLayout({
