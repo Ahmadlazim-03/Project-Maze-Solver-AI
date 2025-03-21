@@ -35,6 +35,13 @@ const Header = () => {
           Laporan
         </a>
 
+        <a 
+          className="btn-getstarted px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition" 
+          href="/code.html" 
+        >
+          Code
+        </a>
+
       </div>
     </header>
   );

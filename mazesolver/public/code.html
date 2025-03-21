@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Presentasi Menarik</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            background: linear-gradient(to right, #6a11cb, #2575fc);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+        .button-container {
+            max-width: 600px;
+            width: 100%;
+            padding: 10px;
+            display: flex; /* Menggunakan flex untuk memusatkan grid */
+            justify-content: center; /* Memusatkan secara horizontal */
+            align-items: center; /* Memusatkan secara vertikal */
+            flex-direction: column; /* Mengatur arah flex menjadi kolom */
+        }
+        table {
+            border-collapse: collapse;
+            width: 90%;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        td {
+            padding: 5px;
+            text-align: center;
+        }
+        button {
+            background: linear-gradient(45deg, #ff6b6b, #feca57);
+            border: none;
+            padding: 8px 12px;
+            font-size: 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            color: white;
+            transition: transform 0.2s, box-shadow 0.3s, background 0.3s;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            font-weight: bold;
+            width: 100%;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden;
+        }
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+            background: linear-gradient(45deg, #feca57, #ff6b6b);
+        }
+        button.active {
+            background: linear-gradient(45deg, #1be600, #00c853);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+        /* Styling untuk tombol Get Full Code */
+        .get-full-code-btn {
+            background: #000000; /* Warna hitam */
+            border: none;
+            padding: 8px 12px;
+            font-size: 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            color: white;
+            transition: transform 0.2s, box-shadow 0.3s;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            font-weight: bold;
+            width: 200px; /* Lebar tetap untuk tombol */
+            margin-top: 20px; /* Jarak dari tombol di atasnya */
+        }
+        .get-full-code-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+        /* Styling untuk tombol Back */
+        .back-btn {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            background: #ff4d4d; /* Warna sama dengan close-btn untuk konsistensi */
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            font-size: 1rem;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1002;
+            transition: background 0.3s;
+        }
+        .back-btn:hover {
+            background: #e63939; /* Warna sedikit lebih gelap saat hover */
+        }
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+        .container {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border-radius: 10px;
+            width: 90%;
+            max-width: 900px;
+            max-height: 80vh;
+            padding: 20px;
+            flex-direction: row;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            z-index: 1001;
+            color: black;
+            overflow-y: auto;
+        }
+        .close-btn {
+            position: sticky;
+            top: 10px;
+            right: 10px;
+            background: #ff4d4d;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            font-size: 1rem;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            align-self: flex-end;
+            z-index: 1002;
+        }
+        .image-wrapper {
+            flex: 0 0 auto;
+            max-width: 50%;
+            align-self: flex-start;
+        }
+        img {
+            width: 100%;
+            max-width: 600px;
+            height: auto;
+            object-fit: contain;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            display: block;
+        }
+        p {
+            font-size: 1.2rem;
+            text-align: left;
+            flex: 1;
+            margin: 0;
+            align-self: flex-start;
+        }
+        h3 {
+            margin: 0 0 10px 0;
+            font-size: 1.5rem;
+            color: #333;
+        }
+        .pagination {
+            display: none; /* Memastikan pagination tidak muncul saat halaman pertama kali dimuat */
+            position: fixed;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 1002;
+            width: 100%;
+            max-width: 960px;
+            justify-content: space-between;
+            pointer-events: none;
+        }
+        .arrow-btn {
+            background: rgba(0, 0, 0, 0.5);
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            font-size: 1.5rem;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.3s;
+            pointer-events: auto;
+        }
+        .arrow-btn:hover {
+            background: rgba(0, 0, 0, 0.8);
+        }
+        .arrow-btn:disabled {
+            background: rgba(0, 0, 0, 0.2);
+            cursor: not-allowed;
+        }
+        .arrow-btn.left {
+            margin-left: -50px;
+        }
+        .arrow-btn.right {
+            margin-right: -50px;
+        }
+        @media (max-width: 768px) {
+            .button-container {
+                max-width: 90%;
+            }
+            table {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 5px;
+            }
+            td {
+                padding: 5px;
+                display: block;
+            }
+            button {
+                font-size: 1rem;
+                padding: 10px 12px;
+            }
+            .get-full-code-btn {
+                font-size: 1rem;
+                padding: 10px 12px;
+                width: 200px;
+            }
+            .container {
+                width: calc(100% - 40px); /* Mengurangi lebar untuk memberikan gap 15px di kanan dan kiri */
+                margin-left: 0px; /* Gap di sisi kiri */
+                margin-top: 0;
+                padding: 15px;
+                flex-direction: column;
+                align-items: center;
+                max-height: 80vh;
+                overflow-y: auto;
+                margin-right: 20px;
+                left: 0;
+                transform: translateY(-50%);
+            }
+            .image-wrapper {
+                max-width: 100%;
+            }
+            img {
+                max-width: 100%;
+                height: auto;
+            }
+            p {
+                font-size: 1rem;
+            }
+            h3 {
+                font-size: 1.3rem;
+            }
+            .pagination {
+                top: auto;
+                bottom: 20px;
+                width: calc(100% - 40px);
+                max-width: 900px;
+                margin-left: 20px;
+                margin-right: 20px;
+                transform: none;
+            }
+            .arrow-btn {
+                width: 35px;
+                height: 35px;
+                font-size: 1.2rem;
+            }
+            .arrow-btn.left {
+                margin-left: 0;
+            }
+            .arrow-btn.right {
+                margin-right: 0;
+            }
+        }
+        @media (max-width: 480px) {
+            .button-container {
+                max-width: 95%;
+                margin-left: 40px;
+                height: 100%; /* Memastikan container mengambil tinggi penuh */
+                overflow-y: auto; /* Menambahkan scroll vertikal jika tombol terlalu banyak */
+            }
+            table {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+            button {
+                font-size: 1.1rem;
+                padding: 12px 10px;
+            }
+            .get-full-code-btn {
+                font-size: 1.1rem;
+                margin-right: 45px;
+                padding: 12px 10px;
+                width: 200px;
+            }
+            .container {
+                width: calc(100% - 50px); /* Mengurangi lebar untuk memberikan gap 15px di kanan dan kiri */
+                margin-left: 10px; /* Gap di sisi kiri */
+                left: 0; /* Menghapus transform untuk memastikan margin bekerja */
+                transform: translateY(-50%); /* Hanya transform Y */
+            }
+            p {
+                font-size: 0.9rem;
+            }
+            h3 {
+                font-size: 1.1rem;
+            }
+            .arrow-btn {
+                width: 30px;
+                height: 30px;
+                font-size: 1rem;
+            }
+            .pagination {
+                width: calc(100% - 30px);
+                margin-left: 15px;
+                margin-right: 15px;
+                transform: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Tombol Back -->
+    <button class="back-btn" onclick="goBack()">←</button>
+
+    <div class="button-container">
+        <table>
+            <tr>
+                <td><button onclick="toggleContent('content1', this)">Deklarasi Variabel</button></td>
+                <td><button onclick="toggleContent('content2', this)">initMaze()</button></td>
+                <td><button onclick="toggleContent('content3', this)">renderMaze()</button></td>
+            </tr>
+            <tr>
+                <td><button onclick="toggleContent('content4', this)">handleCellClick()</button></td>
+                <td><button onclick="toggleContent('content5', this)">findAllPaths()</button></td>
+                <td><button onclick="toggleContent('content6', this)">findShortestPathLength()</button></td>
+            </tr>
+            <tr>
+                <td><button onclick="toggleContent('content7', this)">findShortestPathAndLevels()</button></td>
+                <td><button onclick="toggleContent('content8', this)">visualizeGraph()</button></td>
+                <td><button onclick="toggleContent('content9', this)">solveMaze()</button></td>
+            </tr>
+            <tr>
+                <td><button onclick="toggleContent('content10', this)">runMaze()</button></td>
+                <td><button onclick="toggleContent('content11', this)">animatePath()</button></td>
+                <td><button onclick="toggleContent('content12', this)">setActivePath()</button></td>
+            </tr>
+            <tr>
+                <td><button onclick="toggleContent('content13', this)">resetMaze()</button></td>
+                <td><button onclick="toggleContent('content14', this)">Move User</button></td>
+                <td><button onclick="toggleContent('content15', this)">Start Game</button></td>
+            </tr>
+        </table>
+        <!-- Tombol Get Full Code -->
+        <button onclick="toggleContent('content16', this)" class="get-full-code-btn">Full Code</button>
+    </div>
+    
+    <div class="overlay" id="overlay" onclick="closePopup()"></div>
+    
+    <div id="content" class="container">
+        <div class="image-wrapper">
+            <img id="contentImage" src="" alt="Gambar Ilustrasi">
+        </div>
+        <div id="contentText"></div>
+        <button class="close-btn" onclick="closePopup()">×</button>
+    </div>
+
+    <div class="pagination" id="pagination">
+        <button class="arrow-btn left" onclick="navigateContent(-1)" disabled>←</button>
+        <button class="arrow-btn right" onclick="navigateContent(1)">→</button>
+    </div>
+
+    <script>
+        const contents = {
+            content1: { 
+                image: 'code/code1.png', 
+                title: 'Deklarasi Variabel',
+                description: 'Bagian ini menyiapkan data awal untuk program, seperti ukuran labirin 5x5, posisi pemain, letak rintangan, dan variabel untuk menyimpan jalur serta jejak pergerakan.' 
+            },
+            content2: { 
+                image: 'code/code2.png', 
+                title: 'initMaze()',
+                description: 'Fungsi ini membuat labirin awal dengan menempatkan tanda start di pojok kiri atas, tanda end di pojok kanan bawah, rintangan di posisi tertentu, lalu menampilkan labirin di layar.' 
+            },
+            content3: { 
+                image: 'code/code3.png', 
+                title: 'renderMaze()',
+                description: 'Fungsi ini menggambar labirin di halaman web dengan membuat kotak-kotak, memberi nomor pada setiap kotak, dan mewarnai kotak sesuai perannya, seperti hijau untuk start, merah untuk end, dan hitam untuk rintangan.' 
+            },
+            content4: { 
+                image: 'code/code4.png', 
+                title: 'handleCellClick(i, j)',
+                description: 'Fungsi ini bekerja saat pengguna mengklik kotak di labirin, mengubah kotak kosong menjadi rintangan atau sebaliknya, lalu memperbarui tampilan labirin, tapi tidak bisa mengubah kotak start atau end.' 
+            },
+            content5: { 
+                image: 'code/code5.png', 
+                title: 'findAllPaths()',
+                description: 'Fungsi ini mencari semua jalur yang mungkin dari start ke end dengan mencoba semua langkah yang bisa dilakukan tanpa menabrak rintangan, lalu menyimpan semua jalur yang ditemukan.' 
+            },
+            content6: { 
+                image: 'code/code6.png', 
+                title: 'findShortestPathLength()',
+                description: 'Fungsi ini menghitung jumlah langkah paling sedikit untuk sampai dari start ke end, dan jika tidak ada jalur, akan memberi tahu bahwa tidak ada cara untuk sampai.' 
+            },
+            content7: { 
+                image: 'code/code7.png', 
+                title: 'findShortestPathAndLevels()',
+                description: 'Fungsi ini mencari semua jalur terpendek dari start ke end, menghitung jarak tiap kotak dari start, lalu menampilkan jalur-jalur tersebut di layar agar bisa dipilih untuk dianimasikan.' 
+            },
+            content8: { 
+                image: 'code/code8.png', 
+                title: 'visualizeGraph()',
+                description: 'Fungsi ini membuat gambar grafik dari labirin dengan titik-titik untuk setiap kotak yang bukan rintangan, garis untuk jalur yang bisa dilewati, dan mewarnai jalur terpendek dengan warna biru.' 
+            },
+            content9: { 
+                image: 'code/code9.png', 
+                title: 'solveMaze()',
+                description: 'Fungsi ini menyelesaikan labirin dengan mencari semua jalur, menemukan jalur terpendek, lalu menampilkan labirin dalam bentuk grafik untuk melihat jalur-jalur yang mungkin.' 
+            },
+            content10: { 
+                image: 'code/code10.png', 
+                title: 'runMaze()',
+                description: 'Fungsi ini menjalankan animasi pergerakan pemain melalui jalur terpendek yang dipilih, menunjukkan langkah demi langkah dari start ke end, atau memberi tahu jika tidak ada jalur.' 
+            },
+            content11: { 
+                image: 'code/code11.png', 
+                title: 'animatePath()',
+                description: 'Fungsi ini menggerakkan pemain secara animasi melalui jalur yang dipilih, memindahkan pemain langkah demi langkah dengan jeda waktu agar terlihat seperti bergerak.' 
+            },
+            content12: { 
+                image: 'code/code12.png', 
+                title: 'setActivePath()',
+                description: 'Fungsi ini memilih jalur terpendek yang akan dianimasikan, menandainya sebagai jalur aktif, dan mengubah tombol "Run" untuk menunjukkan nomor jalur yang dipilih.' 
+            },
+            content13: { 
+                image: 'code/code13.png', 
+                title: 'resetMaze()',
+                description: 'Fungsi ini mengatur ulang labirin ke kondisi awal, menghapus semua perubahan, jalur, dan animasi, lalu membuat labirin baru seperti saat pertama kali dibuka.' 
+            },
+            content14: { 
+                image: 'code/code14.png', 
+                title: 'Move User',
+                description: 'Bagian ini memungkinkan pemain bergerak menggunakan tombol panah di keyboard untuk ke atas, bawah, kiri, atau kanan, tanpa bisa melewati rintangan, dan tombol spasi untuk menyelesaikan labirin.' 
+            },
+            content15: { 
+                image: 'code/code15.png', 
+                title: 'Start Game',
+                description: 'Fungsi ini sama seperti initMaze(), digunakan untuk membuat labirin awal dengan menempatkan tanda start, end, dan rintangan, lalu menampilkan labirin di layar.' 
+            },
+            content16: { 
+                image: 'code/code16.png', 
+                title: 'Full Code',
+                description: 'Full Code Menggunakan Bahasa Pemrograman Java Script' 
+            }
+        };
+
+        const contentKeys = Object.keys(contents);
+        let currentIndex = 0;
+
+        function toggleContent(contentId, button) {
+            var container = document.getElementById('content');
+            var overlay = document.getElementById('overlay');
+            var pagination = document.getElementById('pagination');
+            var image = document.getElementById('contentImage');
+            var text = document.getElementById('contentText');
+            
+            currentIndex = contentKeys.indexOf(contentId);
+            
+            image.src = contents[contentId].image;
+            text.innerHTML = `<h3>${contents[contentId].title}</h3><p>${contents[contentId].description}</p>`;
+            
+            container.style.display = 'flex';
+            overlay.style.display = 'block';
+            pagination.style.display = 'flex'; /* Menampilkan pagination saat pop-up muncul */
+            
+            document.querySelectorAll('.button-container button').forEach(btn => btn.classList.remove('active'));
+            button.classList.add('active');
+            
+            updateArrowButtons();
+            
+            container.scrollTop = 0;
+        }
+
+        function navigateContent(direction) {
+            currentIndex += direction;
+            
+            const contentId = contentKeys[currentIndex];
+            const image = document.getElementById('contentImage');
+            const text = document.getElementById('contentText');
+            const container = document.getElementById('content');
+            image.src = contents[contentId].image;
+            text.innerHTML = `<h3>${contents[contentId].title}</h3><p>${contents[contentId].description}</p>`;
+            
+            document.querySelectorAll('.button-container button').forEach(btn => btn.classList.remove('active'));
+            document.querySelector(`.button-container button[onclick="toggleContent('${contentId}', this)"]`).classList.add('active');
+            
+            updateArrowButtons();
+            
+            container.scrollTop = 0;
+        }
+
+        function updateArrowButtons() {
+            const leftArrow = document.querySelector('.arrow-btn.left');
+            const rightArrow = document.querySelector('.arrow-btn.right');
+            
+            leftArrow.disabled = currentIndex === 0;
+            rightArrow.disabled = currentIndex === contentKeys.length - 1;
+        }
+
+        function closePopup() {
+            var container = document.getElementById('content');
+            var overlay = document.getElementById('overlay');
+            var pagination = document.getElementById('pagination');
+            container.style.display = 'none';
+            overlay.style.display = 'none';
+            pagination.style.display = 'none'; /* Menyembunyikan pagination saat pop-up ditutup */
+            
+            document.querySelectorAll('.button-container button').forEach(btn => btn.classList.remove('active'));
+        }
+
+        // Fungsi untuk tombol Back
+        function goBack() {
+            window.history.back();
+        }
+    </script>
+</body>
+</html>

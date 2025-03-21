@@ -637,7 +637,6 @@
             const runButton = document.querySelector('button[onclick="runMaze()"]');
             runButton.classList.remove('active');
             runButton.textContent = 'Run Fast Path';
-            // Remove active class from all path cards
             document.querySelectorAll('.path-card').forEach(card => card.classList.remove('active'));
             initMaze();
             document.getElementById('message').innerHTML = '';
