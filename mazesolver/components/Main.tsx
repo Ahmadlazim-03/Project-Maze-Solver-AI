@@ -18,6 +18,11 @@ const Main = () => {
         </div>
         <div className="text-center">
           <a href="/maze-solver.html" className="btn-get-started">Play Games</a>
+        </div>
+
+        <div className="text-center">
+          <p style={{ marginTop:'50px' }}>Sistem Pakar - Forward Chaining ( Rekomenasi Outfit )</p>
+          <a style={{ backgroundColor:'black'}} href="/maze-solver.html" className="btn-get-started">Open Project</a>
           <p className="mt-5">Anggota Kelompok : </p>
         </div>
 
