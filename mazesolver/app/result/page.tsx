@@ -216,133 +216,148 @@ export default function ResultPage() {
   }
 
   return (
-    <div className="flex flex-col min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
-      <header className="px-4 lg:px-6 h-16 flex items-center backdrop-blur-md bg-white/50 dark:bg-black/20 border-b border-gray-200 dark:border-gray-800">
-        <Link className="flex items-center gap-2 font-semibold" href="/">
-          <Shirt className="h-6 w-6" />
-          <span>OutfitExpert</span>
+    <div className="flex flex-col min-h-screen bg-gradient-to-br from-indigo-50 to-gray-100 dark:from-gray-900/80 dark:to-gray-800 bg-[url('/subtle-pattern.png')] bg-fixed">
+      <header className="px-4 lg:px-6 h-16 flex items-center backdrop-blur-lg bg-white/70 dark:bg-gray-900/70 border-b border-gray-200/50 dark:border-gray-800/50 shadow-sm sticky top-0 z-10">
+        <Link className="flex items-center gap-2 font-bold text-lg" href="/">
+          <Shirt className="h-6 w-6 text-indigo-600" />
+          <span className="text-indigo-600">OutfitExpert</span>
         </Link>
         <div className="ml-auto">
           <ModeToggle />
         </div>
       </header>
-      <main className="flex-1 p-4 md:p-8">
+      <main className="flex-1 p-4 sm:p-6 md:p-8">
         <div className="max-w-4xl mx-auto">
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-            <Card className="mb-8 border-0 shadow-lg bg-white/80 dark:bg-gray-900/80 backdrop-blur-md overflow-hidden">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+          >
+            <Card className="border-0 shadow-2xl bg-gradient-to-br from-white/80 to-gray-50 dark:from-gray-900/80 dark:to-gray-800/50 backdrop-blur-xl rounded-2xl overflow-hidden">
               <div className={`h-2 w-full ${recommendation.color}`}></div>
-              <CardHeader className="text-center pt-8">
+              <CardHeader className="text-center pt-6 pb-4">
                 <motion.div
                   initial={{ scale: 0.8, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                   transition={{ delay: 0.2, duration: 0.5 }}
                 >
-                  <Badge className={`${recommendation.color} text-white px-4 py-1 text-sm mb-4`}>
+                  <Badge className={`${recommendation.color} text-white px-3 py-1 text-sm mb-4`}>
                     Rekomendasi untuk Anda
                   </Badge>
                 </motion.div>
-                <CardTitle className="text-2xl md:text-3xl">Hasil Rekomendasi Outfit</CardTitle>
-                <CardDescription>Berdasarkan jawaban Anda, kami merekomendasikan gaya:</CardDescription>
+                <CardTitle className="text-2xl sm:text-3xl font-extrabold text-gray-900 dark:text-white">
+                  Hasil Rekomendasi Outfit
+                </CardTitle>
+                <CardDescription className="text-gray-600 dark:text-gray-400 mt-2">
+                  Berdasarkan jawaban Anda, kami merekomendasikan gaya:
+                </CardDescription>
                 <motion.h2
-                  className="text-3xl font-bold mt-2 text-primary"
+                  className="text-3xl sm:text-4xl font-bold mt-3 text-primary"
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.3, duration: 0.5 }}
                 >
                   {recommendation.title}
                 </motion.h2>
-                <p className="mt-2">{recommendation.description}</p>
+                <p className="mt-2 text-gray-700 dark:text-gray-300">{recommendation.description}</p>
               </CardHeader>
 
               <Tabs defaultValue="recommendation" className="w-full">
-                <TabsList className="grid w-full grid-cols-2 mb-4">
-                  <TabsTrigger value="recommendation" className="text-sm">
+                <TabsList className="grid w-full grid-cols-2 mb-6">
+                  <TabsTrigger value="recommendation" className="text-sm sm:text-base data-[state=active]:bg-white data-[state=active]:text-black dark:data-[state=active]:bg-gray-800 dark:data-[state=active]:text-white">
                     <CheckCircle2 className="h-4 w-4 mr-2" />
                     Rekomendasi
                   </TabsTrigger>
-                  <TabsTrigger value="answers" className="text-sm">
+                  <TabsTrigger value="answers" className="text-sm sm:text-base data-[state=active]:bg-white data-[state=active]:text-black dark:data-[state=active]:bg-gray-800 dark:data-[state=active]:text-white">
                     <ClipboardList className="h-4 w-4 mr-2" />
                     Jawaban Anda
                   </TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="recommendation">
-                  <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-6">
-                      <div>
-                        <h3 className="font-semibold text-lg mb-2">Atasan</h3>
-                        <ul className="list-disc pl-5 space-y-1">
-                          {recommendation.tops.map((item, index) => (
-                            <li key={index}>{item}</li>
-                          ))}
-                        </ul>
+                  <CardContent className="p-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="space-y-6">
+                        <div>
+                          <h3 className="font-semibold text-lg sm:text-xl mb-3 text-gray-900 dark:text-white">Atasan</h3>
+                          <ul className="list-disc pl-5 space-y-2 text-gray-700 dark:text-gray-300">
+                            {recommendation.tops.map((item, index) => (
+                              <li key={index} className="text-sm sm:text-base">{item}</li>
+                            ))}
+                          </ul>
+                        </div>
+                        <div>
+                          <h3 className="font-semibold text-lg sm:text-xl mb-3 text-gray-900 dark:text-white">Bawahan</h3>
+                          <ul className="list-disc pl-5 space-y-2 text-gray-700 dark:text-gray-300">
+                            {recommendation.bottoms.map((item, index) => (
+                              <li key={index} className="text-sm sm:text-base">{item}</li>
+                            ))}
+                          </ul>
+                        </div>
+                        <div>
+                          <h3 className="font-semibold text-lg sm:text-xl mb-3 text-gray-900 dark:text-white">Sepatu</h3>
+                          <ul className="list-disc pl-5 space-y-2 text-gray-700 dark:text-gray-300">
+                            {recommendation.shoes.map((item, index) => (
+                              <li key={index} className="text-sm sm:text-base">{item}</li>
+                            ))}
+                          </ul>
+                        </div>
+                        <div>
+                          <h3 className="font-semibold text-lg sm:text-xl mb-3 text-gray-900 dark:text-white">Aksesori</h3>
+                          <ul className="list-disc pl-5 space-y-2 text-gray-700 dark:text-gray-300">
+                            {recommendation.accessories.map((item, index) => (
+                              <li key={index} className="text-sm sm:text-base">{item}</li>
+                            ))}
+                          </ul>
+                        </div>
                       </div>
-                      <div>
-                        <h3 className="font-semibold text-lg mb-2">Bawahan</h3>
-                        <ul className="list-disc pl-5 space-y-1">
-                          {recommendation.bottoms.map((item, index) => (
-                            <li key={index}>{item}</li>
-                          ))}
-                        </ul>
-                      </div>
-                      <div>
-                        <h3 className="font-semibold text-lg mb-2">Sepatu</h3>
-                        <ul className="list-disc pl-5 space-y-1">
-                          {recommendation.shoes.map((item, index) => (
-                            <li key={index}>{item}</li>
-                          ))}
-                        </ul>
-                      </div>
-                      <div>
-                        <h3 className="font-semibold text-lg mb-2">Aksesori</h3>
-                        <ul className="list-disc pl-5 space-y-1">
-                          {recommendation.accessories.map((item, index) => (
-                            <li key={index}>{item}</li>
-                          ))}
-                        </ul>
-                      </div>
-                    </div>
-                    <div className="space-y-6">
-                      <div className="flex justify-center">
-                        <Image
-                          src={recommendation.image || "/placeholder.svg"}
-                          alt={`${recommendation.title} outfit example`}
-                          width={400}
-                          height={300}
-                          className="rounded-lg"
-                        />
-                      </div>
-                      <div>
-                        <h3 className="font-semibold text-lg mb-2">Tips Gaya {recommendation.title}</h3>
-                        <ul className="list-disc pl-5 space-y-1">
-                          {recommendation.tips.map((tip, index) => (
-                            <li key={index}>{tip}</li>
-                          ))}
-                        </ul>
+                      <div className="space-y-6">
+                        <div className="flex justify-center">
+                          <Image
+                            src={recommendation.image || "/placeholder.svg"}
+                            alt={`${recommendation.title} outfit example`}
+                            width={400}
+                            height={300}
+                            className="rounded-lg shadow-md w-full md:w-auto h-auto"
+                          />
+                        </div>
+                        <div>
+                          <h3 className="font-semibold text-lg sm:text-xl mb-3 text-gray-900 dark:text-white">
+                            Tips Gaya {recommendation.title}
+                          </h3>
+                          <ul className="list-disc pl-5 space-y-2 text-gray-700 dark:text-gray-300">
+                            {recommendation.tips.map((tip, index) => (
+                              <li key={index} className="text-sm sm:text-base">{tip}</li>
+                            ))}
+                          </ul>
+                        </div>
                       </div>
                     </div>
                   </CardContent>
                 </TabsContent>
 
                 <TabsContent value="answers">
-                  <CardContent>
+                  <CardContent className="p-6">
                     <div className="space-y-4">
-                      <h3 className="font-semibold text-lg">Jawaban Anda</h3>
-                      <p className="text-muted-foreground">Berikut adalah jawaban yang Anda berikan pada konsultasi:</p>
-
-                      <div className="space-y-4 mt-6">
+                      <h3 className="font-semibold text-lg sm:text-xl text-gray-900 dark:text-white">Jawaban Anda</h3>
+                      <p className="text-gray-600 dark:text-gray-400 text-sm sm:text-base">
+                        Berikut adalah jawaban yang Anda berikan pada konsultasi:
+                      </p>
+                      <div className="space-y-4 mt-4">
                         {formattedAnswers.map((item, index) => (
                           <motion.div
                             key={index}
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.1 * index, duration: 0.3 }}
-                            className="flex items-start p-4 rounded-lg border border-gray-200 dark:border-gray-700"
+                            className="flex items-start p-4 rounded-lg border border-gray-200 dark:border-gray-700 bg-white/50 dark:bg-gray-800/50"
                           >
-                            <div className="mr-3 text-2xl">{item.icon}</div>
+                            <div className="mr-3 text-2xl sm:text-3xl">{item.icon}</div>
                             <div>
-                              <h4 className="font-medium text-sm text-muted-foreground">{item.question}</h4>
-                              <p className="font-semibold">{item.answer}</p>
+                              <h4 className="font-medium text-sm sm:text-base text-gray-600 dark:text-gray-400">
+                                {item.question}
+                              </h4>
+                              <p className="font-semibold text-gray-900 dark:text-white">{item.answer}</p>
                             </div>
                           </motion.div>
                         ))}
@@ -352,40 +367,44 @@ export default function ResultPage() {
                 </TabsContent>
               </Tabs>
 
-              <CardFooter className="flex flex-col sm:flex-row gap-4 justify-center pt-6 pb-6">
+              <CardFooter className="flex flex-col sm:flex-row gap-4 justify-center p-6">
                 <Link href="/">
-                  <Button variant="outline" className="gap-2">
+                  <Button variant="outline" className="w-full sm:w-auto gap-2 px-4 py-2 text-sm sm:text-base">
                     <Home className="h-4 w-4" />
                     Kembali ke Beranda
                   </Button>
                 </Link>
                 <Link href="/quiz">
-                  <Button className="gap-2">
+                  <Button className="w-full sm:w-auto gap-2 px-4 py-2 text-sm sm:text-base">
                     <Shirt className="h-4 w-4" />
                     Konsultasi Lagi
                   </Button>
                 </Link>
-                <Button variant="secondary" className="gap-2" onClick={handleShare}>
+                <Button
+                  variant="secondary"
+                  className="w-full sm:w-auto gap-2 px-4 py-2 text-sm sm:text-base"
+                  onClick={handleShare}
+                >
                   <Share2 className="h-4 w-4" />
                   Bagikan Hasil
                 </Button>
               </CardFooter>
             </Card>
 
-            <div className="space-y-6">
-              <h2 className="text-2xl font-bold">Penjelasan Sistem Pakar</h2>
-              <p>
-                Rekomendasi outfit ini dihasilkan menggunakan metode <strong>forward chaining</strong>, yaitu teknik
-                inferensi dalam sistem pakar yang memproses informasi dari fakta-fakta yang diketahui (jawaban Anda)
-                untuk mencapai kesimpulan (rekomendasi outfit).
+            <div className="space-y-6 mt-8">
+              <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">Penjelasan Sistem Pakar</h2>
+              <p className="text-gray-700 dark:text-gray-300 text-sm sm:text-base">
+                Rekomendasi outfit ini dihasilkan menggunakan metode{" "}
+                <strong>forward chaining</strong>, yaitu teknik inferensi dalam sistem pakar yang memproses informasi
+                dari fakta-fakta yang diketahui (jawaban Anda) untuk mencapai kesimpulan (rekomendasi outfit).
               </p>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <Card>
+                <Card className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-md">
                   <CardHeader>
-                    <CardTitle>Bagaimana Forward Chaining Bekerja</CardTitle>
+                    <CardTitle className="text-lg sm:text-xl">Bagaimana Forward Chaining Bekerja</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <ol className="list-decimal pl-5 space-y-2">
+                    <ol className="list-decimal pl-5 space-y-2 text-gray-700 dark:text-gray-300 text-sm sm:text-base">
                       <li>Sistem mengumpulkan fakta awal (jawaban Anda dari kuesioner)</li>
                       <li>Menerapkan aturan-aturan (rules) pada fakta tersebut</li>
                       <li>Menghasilkan fakta baru berdasarkan kecocokan aturan</li>
@@ -393,12 +412,12 @@ export default function ResultPage() {
                     </ol>
                   </CardContent>
                 </Card>
-                <Card>
+                <Card className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-md">
                   <CardHeader>
-                    <CardTitle>Aturan yang Digunakan</CardTitle>
+                    <CardTitle className="text-lg sm:text-xl">Aturan yang Digunakan</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <ul className="list-disc pl-5 space-y-2">
+                    <ul className="list-disc pl-5 space-y-2 text-gray-700 dark:text-gray-300 text-sm sm:text-base">
                       <li>Jenis acara menentukan formalitas outfit</li>
                       <li>Cuaca mempengaruhi jenis pakaian yang sesuai</li>
                       <li>Preferensi warna mengarahkan pada gaya tertentu</li>
@@ -412,9 +431,9 @@ export default function ResultPage() {
           </motion.div>
         </div>
       </main>
-      <footer className="py-4 w-full shrink-0 items-center px-4 md:px-6 text-center backdrop-blur-md bg-white/50 dark:bg-black/20 border-t border-gray-200 dark:border-gray-800">
-        <p className="text-xs text-muted-foreground">
-          &copy; {new Date().getFullYear()} OutfitExpert. Hak Cipta Dilindungi.
+      <footer className="py-4 w-full shrink-0 items-center px-4 md:px-6 text-center backdrop-blur-md bg-white/70 dark:bg-gray-900/70 border-t border-gray-200/50 dark:border-gray-800/50">
+        <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+          © {new Date().getFullYear()} OutfitExpert. Hak Cipta Dilindungi.
         </p>
       </footer>
     </div>

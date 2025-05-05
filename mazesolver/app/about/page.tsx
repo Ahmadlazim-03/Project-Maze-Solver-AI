@@ -1,97 +1,159 @@
+"use client"
+import { useState } from "react"
 import Link from "next/link"
 import { Button } from "../../components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../components/ui/card"
 import { Shirt, Brain, ArrowRight } from "lucide-react"
 
 export default function AboutPage() {
+   const [menuOpen, setMenuOpen] = useState(false);
+    const toggleMenu = () => setMenuOpen(!menuOpen);
   return (
-    <div className="flex flex-col min-h-screen">
-      <header className="px-4 lg:px-6 h-16 flex items-center border-b">
-        <Link className="flex items-center gap-2 font-semibold" href="/">
-          <Shirt className="h-6 w-6" />
-          <span>OutfitExpert</span>
+    <div className="flex flex-col min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+        <header className="px-4 lg:px-8 h-16 flex items-center justify-between border-b bg-white shadow-lg sticky top-0 z-50">
+        <Link className="flex items-center gap-2 font-bold text-xl tracking-tight" href="/">
+          <Shirt className="h-7 w-7 text-indigo-600" />
+          <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+            OutfitExpert
+          </span>
         </Link>
-        <nav className="ml-auto flex gap-4 sm:gap-6">
-          <Link className="text-sm font-medium hover:underline underline-offset-4" href="/">
+
+        <button className="sm:hidden block text-indigo-600" onClick={toggleMenu}>
+          {/* icon hamburger */}
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+
+        <nav className="hidden sm:flex ml-auto gap-4">
+          <Link className="text-sm font-semibold hover:bg-indigo-100 px-3 py-2 rounded-lg transition-all duration-300" href="/sistem-pakar">
+          
             Beranda
           </Link>
-          <Link className="text-sm font-medium hover:underline underline-offset-4" href="/about">
+          <Link className="text-sm font-semibold bg-indigo-100 px-3 py-2 rounded-lg transition-all duration-300" href="/about">
+         
             Tentang
           </Link>
         </nav>
+        {menuOpen && (
+  <div
+    className="absolute top-16 right-4 w-40 bg-white rounded-lg shadow-lg py-2 z-50"
+    style={{
+      animation: 'fadeInDown 0.3s ease-out both',
+      opacity: 0,
+      transform: 'translateY(-0.5rem)',
+      animationFillMode: 'forwards',
+    }}
+  >
+    <style>
+      {`
+        @keyframes fadeInDown {
+          from {
+            opacity: 0;
+            transform: translateY(-0.5rem);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+      `}
+    </style>
+
+    <Link
+      href="/sistem-pakar"
+      className="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-100 rounded-md transition"
+    >
+      Beranda
+    </Link>
+    <Link
+      href="/about"
+      className="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-100 rounded-md transition"
+    >
+      Tentang
+    </Link>
+  </div>
+)}
+
       </header>
       <main className="flex-1">
-        <section className="w-full py-12 md:py-24 lg:py-32 bg-muted/40">
-          <div className="container px-4 md:px-6">
-            <div className="flex flex-col items-center justify-center space-y-4 text-center">
-              <div className="space-y-2">
-                <h1 className="text-3xl font-bold tracking-tighter sm:text-5xl">Tentang OutfitExpert</h1>
-                <p className="max-w-[700px] text-muted-foreground md:text-xl">
-                  Sistem pakar berbasis kecerdasan buatan untuk rekomendasi outfit yang sesuai dengan preferensi Anda.
+        <section className="w-full py-16 md:py-28 lg:py-36 bg-gradient-to-r from-indigo-100 to-purple-100">
+          <div className="container px-4 md:px-8">
+            <div className="flex flex-col items-center justify-center space-y-6 text-center">
+              <div className="space-y-3">
+                <h1 className="text-3xl font-extrabold tracking-tight sm:text-5xl md:text-6xl bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                  Tentang OutfitExpert
+                </h1>
+                <p className="max-w-[700px] text-gray-600 text-base sm:text-lg md:text-xl leading-relaxed mx-auto">
+                  Sistem pakar berbasis AI untuk rekomendasi outfit yang stylish dan sesuai dengan kepribadian Anda.
                 </p>
               </div>
             </div>
           </div>
         </section>
 
-        <section className="w-full py-12 md:py-24 lg:py-32">
-          <div className="container px-4 md:px-6">
-            <div className="grid gap-6 lg:grid-cols-2 lg:gap-12 items-center">
-              <div className="space-y-4">
-                <div className="inline-flex items-center rounded-lg bg-muted px-3 py-1 text-sm">
-                  <Brain className="mr-1 h-4 w-4" />
+        <section className="w-full py-16 md:py-28 lg:py-36">
+          <div className="container px-4 md:px-8">
+            <div className="grid gap-8 lg:grid-cols-2 lg:gap-16 items-center">
+              <div className="space-y-6">
+                <div className="inline-flex items-center rounded-full bg-indigo-100 px-4 py-2 text-sm font-semibold text-indigo-700">
+                  <Brain className="mr-2 h-5 w-5" />
                   <span>Sistem Pakar</span>
                 </div>
-                <h2 className="text-3xl font-bold tracking-tighter md:text-4xl/tight">Apa itu Sistem Pakar?</h2>
-                <p className="text-muted-foreground md:text-lg/relaxed lg:text-base/relaxed xl:text-lg/relaxed">
-                  Sistem pakar adalah cabang dari kecerdasan buatan yang menggunakan pengetahuan manusia untuk
-                  menyelesaikan masalah yang biasanya membutuhkan keahlian manusia. Sistem ini dirancang untuk meniru
-                  proses pengambilan keputusan seorang pakar dalam bidang tertentu.
+                <h2 className="text-3xl font-extrabold tracking-tight md:text-4xl lg:text-5xl text-gray-900">
+                  Apa itu Sistem Pakar?
+                </h2>
+                <p className="text-gray-600 text-base sm:text-lg md:text-xl leading-relaxed">
+                  Sistem pakar adalah teknologi AI yang meniru keahlian manusia untuk menyelesaikan masalah kompleks. Sistem ini menggabungkan pengetahuan mendalam dengan logika cerdas untuk memberikan solusi terbaik.
                 </p>
-                <p className="text-muted-foreground md:text-lg/relaxed lg:text-base/relaxed xl:text-lg/relaxed">
-                  OutfitExpert menggunakan sistem pakar untuk memberikan rekomendasi outfit berdasarkan berbagai faktor
-                  seperti acara, cuaca, preferensi warna, dan gaya yang Anda sukai.
+                <p className="text-gray-600 text-base sm:text-lg md:text-xl leading-relaxed">
+                  OutfitExpert memanfaatkan sistem pakar untuk merekomendasikan outfit berdasarkan acara, cuaca, warna favorit, dan gaya pribadi Anda.
                 </p>
               </div>
-              <Card>
-                <CardHeader>
-                  <CardTitle>Komponen Sistem Pakar</CardTitle>
-                  <CardDescription>Elemen-elemen utama dalam sistem pakar OutfitExpert</CardDescription>
+              <Card className="relative bg-white shadow-2xl hover:shadow-3xl transition-all duration-500 rounded-3xl overflow-hidden max-w-xl mx-auto">
+                <div className="absolute inset-0 bg-gradient-to-br from-indigo-50 to-purple-50 opacity-70" />
+                <CardHeader className="relative z-10 p-8">
+                  <CardTitle className="text-3xl font-bold text-gray-900 tracking-tight text-center">
+                    Komponen Sistem Pakar
+                  </CardTitle>
+                  <CardDescription className="text-lg text-gray-500 text-center mt-3">
+                    Elemen utama yang membuat OutfitExpert cerdas
+                  </CardDescription>
                 </CardHeader>
-                <CardContent className="grid gap-4">
-                  <div className="grid grid-cols-[25px_1fr] items-start pb-4 last:mb-0 last:pb-0">
-                    <span className="flex h-2 w-2 translate-y-1 rounded-full bg-primary" />
-                    <div className="space-y-1">
-                      <p className="font-medium leading-none">Basis Pengetahuan</p>
-                      <p className="text-sm text-muted-foreground">
-                        Kumpulan aturan dan fakta tentang fashion dan gaya berpakaian
+                <CardContent className="relative z-10 p-8 grid gap-8">
+                  <div className="grid grid-cols-[40px_1fr] items-start pb-4 transition-transform duration-300 hover:scale-105">
+                    <span className="flex h-4 w-4 translate-y-2 rounded-full bg-indigo-500 shadow-lg" />
+                    <div className="space-y-2">
+                      <p className="font-semibold text-lg text-gray-900">Basis Pengetahuan</p>
+                      <p className="text-base text-gray-600 leading-relaxed">
+                        Koleksi aturan dan tren fashion terkini
                       </p>
                     </div>
                   </div>
-                  <div className="grid grid-cols-[25px_1fr] items-start pb-4 last:mb-0 last:pb-0">
-                    <span className="flex h-2 w-2 translate-y-1 rounded-full bg-primary" />
-                    <div className="space-y-1">
-                      <p className="font-medium leading-none">Mesin Inferensi</p>
-                      <p className="text-sm text-muted-foreground">
-                        Algoritma forward chaining untuk menganalisis input dan menghasilkan rekomendasi
+                  <div className="grid grid-cols-[40px_1fr] items-start pb-4 transition-transform duration-300 hover:scale-105">
+                    <span className="flex h-4 w-4 translate-y-2 rounded-full bg-indigo-500 shadow-lg" />
+                    <div className="space-y-2">
+                      <p className="font-semibold text-lg text-gray-900">Mesin Inferensi</p>
+                      <p className="text-base text-gray-600 leading-relaxed">
+                        Algoritma cerdas untuk analisis dan rekomendasi
                       </p>
                     </div>
                   </div>
-                  <div className="grid grid-cols-[25px_1fr] items-start pb-4 last:mb-0 last:pb-0">
-                    <span className="flex h-2 w-2 translate-y-1 rounded-full bg-primary" />
-                    <div className="space-y-1">
-                      <p className="font-medium leading-none">Antarmuka Pengguna</p>
-                      <p className="text-sm text-muted-foreground">
-                        Kuesioner interaktif untuk mengumpulkan preferensi pengguna
+                  <div className="grid grid-cols-[40px_1fr] items-start pb-4 transition-transform duration-300 hover:scale-105">
+                    <span className="flex h-4 w-4 translate-y-2 rounded-full bg-indigo-500 shadow-lg" />
+                    <div className="space-y-2">
+                      <p className="font-semibold text-lg text-gray-900">Antarmuka Pengguna</p>
+                      <p className="text-base text-gray-600 leading-relaxed">
+                        Kuesioner interaktif yang mudah digunakan
                       </p>
                     </div>
                   </div>
-                  <div className="grid grid-cols-[25px_1fr] items-start pb-4 last:mb-0 last:pb-0">
-                    <span className="flex h-2 w-2 translate-y-1 rounded-full bg-primary" />
-                    <div className="space-y-1">
-                      <p className="font-medium leading-none">Modul Penjelasan</p>
-                      <p className="text-sm text-muted-foreground">
-                        Penjelasan tentang bagaimana rekomendasi dihasilkan
+                  <div className="grid grid-cols-[40px_1fr] items-start pb-4 transition-transform duration-300 hover:scale-105">
+                    <span className="flex h-4 w-4 translate-y-2 rounded-full bg-indigo-500 shadow-lg" />
+                    <div className="space-y-2">
+                      <p className="font-semibold text-lg text-gray-900">Modul Penjelasan</p>
+                      <p className="text-base text-gray-600 leading-relaxed">
+                        Transparansi dalam proses rekomendasi
                       </p>
                     </div>
                   </div>
@@ -101,101 +163,67 @@ export default function AboutPage() {
           </div>
         </section>
 
-        <section className="w-full py-12 md:py-24 lg:py-32 bg-muted/40">
-          <div className="container px-4 md:px-6">
-            <div className="mx-auto flex max-w-[58rem] flex-col items-center justify-center space-y-4 text-center">
-              <h2 className="text-3xl font-bold tracking-tighter md:text-4xl">Forward Chaining</h2>
-              <p className="max-w-[85%] text-muted-foreground md:text-lg/relaxed lg:text-base/relaxed xl:text-lg/relaxed">
-                OutfitExpert menggunakan metode forward chaining, sebuah teknik inferensi dalam sistem pakar yang
-                memproses informasi dari fakta-fakta yang diketahui untuk mencapai kesimpulan.
+        <section className="w-full py-16 md:py-28 lg:py-36 bg-gradient-to-r from-purple-100 to-indigo-100">
+          <div className="container px-4 md:px-8">
+            <div className="mx-auto flex max-w-[58rem] flex-col items-center justify-center space-y-6 text-center">
+              <h2 className="text-3xl font-extrabold tracking-tight md:text-4xl lg:text-5xl text-gray-900">
+                Forward Chaining
+              </h2>
+              <p className="max-w-[85%] text-gray-600 text-base sm:text-lg md:text-xl leading-relaxed">
+                OutfitExpert menggunakan teknik forward chaining untuk memproses informasi secara logis dan menghasilkan rekomendasi outfit yang tepat.
               </p>
             </div>
-            <div className="mx-auto grid justify-center gap-4 sm:grid-cols-2 md:max-w-[64rem] md:grid-cols-3 lg:gap-8 mt-8">
-              <Card className="flex flex-col items-center justify-center p-4">
-                <CardHeader className="items-center text-center">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary text-primary-foreground">
-                    1
-                  </div>
-                  <CardTitle>Pengumpulan Fakta</CardTitle>
-                </CardHeader>
-                <CardContent className="text-center">
-                  <p>Sistem mengumpulkan fakta awal melalui jawaban pengguna pada kuesioner</p>
-                </CardContent>
-              </Card>
-              <Card className="flex flex-col items-center justify-center p-4">
-                <CardHeader className="items-center text-center">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary text-primary-foreground">
-                    2
-                  </div>
-                  <CardTitle>Penerapan Aturan</CardTitle>
-                </CardHeader>
-                <CardContent className="text-center">
-                  <p>Sistem menerapkan aturan-aturan fashion pada fakta yang telah dikumpulkan</p>
-                </CardContent>
-              </Card>
-              <Card className="flex flex-col items-center justify-center p-4">
-                <CardHeader className="items-center text-center">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary text-primary-foreground">
-                    3
-                  </div>
-                  <CardTitle>Inferensi</CardTitle>
-                </CardHeader>
-                <CardContent className="text-center">
-                  <p>Sistem menghasilkan fakta baru berdasarkan kecocokan aturan dengan fakta yang ada</p>
-                </CardContent>
-              </Card>
-              <Card className="flex flex-col items-center justify-center p-4 sm:col-span-2 md:col-span-1">
-                <CardHeader className="items-center text-center">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary text-primary-foreground">
-                    4
-                  </div>
-                  <CardTitle>Iterasi</CardTitle>
-                </CardHeader>
-                <CardContent className="text-center">
-                  <p>Proses berlanjut dengan menerapkan aturan pada fakta baru yang dihasilkan</p>
-                </CardContent>
-              </Card>
-              <Card className="flex flex-col items-center justify-center p-4 sm:col-span-2 md:col-span-1">
-                <CardHeader className="items-center text-center">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary text-primary-foreground">
-                    5
-                  </div>
-                  <CardTitle>Kesimpulan</CardTitle>
-                </CardHeader>
-                <CardContent className="text-center">
-                  <p>Sistem mencapai kesimpulan berupa rekomendasi outfit yang sesuai</p>
-                </CardContent>
-              </Card>
+            <div className="mx-auto grid justify-center gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:gap-10 mt-12">
+              {[
+                { step: 1, title: "Pengumpulan Fakta", desc: "Mengumpulkan preferensi Anda melalui kuesioner interaktif" },
+                { step: 2, title: "Penerapan Aturan", desc: "Menerapkan aturan fashion pada data yang terkumpul" },
+                { step: 3, title: "Inferensi", desc: "Menghasilkan fakta baru berdasarkan aturan yang cocok" },
+                { step: 4, title: "Iterasi", desc: "Mengulangi proses dengan fakta baru untuk hasil optimal" },
+                { step: 5, title: "Kesimpulan", desc: "Memberikan rekomendasi outfit yang sesuai" },
+              ].map(({ step, title, desc }) => (
+                <Card key={step} className="flex flex-col items-center justify-center p-6 bg-white shadow-xl hover:shadow-2xl transition-all duration-300 rounded-2xl">
+                  <CardHeader className="flex flex-col items-center text-center">
+                    <div className="flex h-14 w-14 items-center justify-center rounded-full bg-indigo-600 text-white font-bold text-xl">
+                      {step}
+                    </div>
+                    <CardTitle className="text-xl font-semibold text-gray-900 mt-4">{title}</CardTitle>
+                  </CardHeader>
+                  <CardContent className="text-center">
+                    <p className="text-base text-gray-600">{desc}</p>
+                  </CardContent>
+                </Card>
+              ))}
             </div>
           </div>
         </section>
 
-        <section className="w-full py-12 md:py-24 lg:py-32">
-          <div className="container px-4 md:px-6">
-            <div className="flex flex-col items-center justify-center space-y-4 text-center">
-              <h2 className="text-3xl font-bold tracking-tighter md:text-4xl">Mulai Konsultasi Sekarang</h2>
-              <p className="max-w-[700px] text-muted-foreground md:text-lg">
-                Temukan rekomendasi outfit yang sesuai dengan preferensi dan kebutuhan Anda melalui sistem pakar
-                OutfitExpert.
+        <section className="w-full py-16 md:py-28 lg:py-36">
+          <div className="container px-4 md:px-8">
+            <div className="flex flex-col items-center justify-center space-y-6 text-center">
+              <h2 className="text-3xl font-extrabold tracking-tight md:text-4xl lg:text-5xl text-gray-900">
+                Mulai Konsultasi Sekarang
+              </h2>
+              <p className="max-w-[700px] text-gray-600 text-base sm:text-lg md:text-xl leading-relaxed">
+                Dapatkan rekomendasi outfit yang stylish dan sesuai dengan kebutuhan Anda hanya dalam beberapa klik.
               </p>
               <Link href="/quiz">
-                <Button size="lg" className="gap-2">
-                  Mulai Konsultasi <ArrowRight className="h-4 w-4" />
+                <Button size="lg" className="bg-indigo-600 hover:bg-indigo-700 text-white gap-3 rounded-full px-8 py-6 text-lg font-semibold transition-all duration-300 shadow-lg">
+                  Mulai Konsultasi <ArrowRight className="h-5 w-5" />
                 </Button>
               </Link>
             </div>
           </div>
         </section>
       </main>
-      <footer className="flex flex-col gap-2 sm:flex-row py-6 w-full shrink-0 items-center px-4 md:px-6 border-t">
-        <p className="text-xs text-muted-foreground">
-          &copy; {new Date().getFullYear()} OutfitExpert. Hak Cipta Dilindungi.
+      <footer className="flex flex-col gap-4 sm:flex-row py-8 w-full shrink-0 items-center px-4 md:px-8 border-t bg-white shadow-md">
+        <p className="text-sm text-gray-600">
+          © {new Date().getFullYear()} OutfitExpert. Hak Cipta Dilindungi.
         </p>
-        <nav className="sm:ml-auto flex gap-4 sm:gap-6">
-          <Link className="text-xs hover:underline underline-offset-4" href="#">
+        <nav className="sm:ml-auto flex gap-6">
+          <Link className="text-sm font-medium hover:text-indigo-600 transition-colors" href="#">
             Kebijakan Privasi
           </Link>
-          <Link className="text-xs hover:underline underline-offset-4" href="#">
+          <Link className="text-sm font-medium hover:text-indigo-600 transition-colors" href="#">
             Syarat & Ketentuan
           </Link>
         </nav>
