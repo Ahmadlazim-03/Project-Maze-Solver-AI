@@ -8,7 +8,6 @@ import { motion } from "framer-motion"
 import { Button } from "../../components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../../components/ui/card"
 import { Shirt, Home, Share2, CheckCircle2, ClipboardList } from "lucide-react"
-import { ModeToggle } from "../../components/ui/mode-toggle"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../components/ui/tabs"
 import { Badge } from "../../components/ui/badge"
 
@@ -85,7 +84,6 @@ const outfitRecommendations = {
       "Gunakan aksesori minimalis untuk melengkapi tampilan",
       "Prioritaskan kenyamanan tanpa mengorbankan gaya",
     ],
-    image: "/placeholder.svg?height=300&width=400",
     color: "bg-blue-500",
   },
   formal: {
@@ -101,7 +99,6 @@ const outfitRecommendations = {
       "Pastikan pakaian bebas dari kerutan dan noda",
       "Pilih aksesori yang elegan dan tidak berlebihan",
     ],
-    image: "/placeholder.svg?height=300&width=400",
     color: "bg-purple-500",
   },
   vintage: {
@@ -117,7 +114,6 @@ const outfitRecommendations = {
       "Gunakan warna pastel atau earth tone untuk nuansa retro",
       "Tambahkan aksesori khas era tertentu untuk memperkuat tampilan",
     ],
-    image: "/placeholder.svg?height=300&width=400",
     color: "bg-amber-500",
   },
   streetwear: {
@@ -133,7 +129,6 @@ const outfitRecommendations = {
       "Gunakan warna-warna kontras atau monokrom",
       "Pilih sneakers yang menjadi statement piece",
     ],
-    image: "/placeholder.svg?height=300&width=400",
     color: "bg-emerald-500",
   },
   sporty: {
@@ -149,7 +144,6 @@ const outfitRecommendations = {
       "Gunakan warna-warna cerah untuk tampilan energik",
       "Pilih sepatu yang nyaman dan fungsional",
     ],
-    image: "/placeholder.svg?height=300&width=400",
     color: "bg-rose-500",
   },
 }
@@ -160,9 +154,11 @@ export default function ResultPage() {
   const searchParams = useSearchParams()
   const [style, setStyle] = useState<StyleKey>("casual")
   const [userAnswers, setUserAnswers] = useState<Record<number, string>>({})
-  const [formattedAnswers, setFormattedAnswers] = useState<Array<{ question: string; answer: string; icon: string }>>(
-    [],
-  )
+  const [formattedAnswers, setFormattedAnswers] = useState<Array<{ question: string; answer: string; icon: string }>>([])
+  const [menuOpen, setMenuOpen] = useState(false)
+  const [outfitImage, setOutfitImage] = useState<string>("/placeholder.svg")
+
+  const toggleMenu = () => setMenuOpen(!menuOpen)
 
   useEffect(() => {
     const styleParam = searchParams.get("style")
@@ -194,7 +190,32 @@ export default function ResultPage() {
         console.error("Error parsing answers:", error)
       }
     }
-  }, [searchParams])
+
+    // Fetch Unsplash image based on style
+    const fetchUnsplashImage = async () => {
+      const clientId = 'bJ9Zo_3DHgaH7beohU1c7mLQolOWNPp8uDcHVOIfQzs' // Replace with your Unsplash API key
+      const query = styleParam || "casual outfit"
+      const url = `https://api.unsplash.com/search/photos?query=${encodeURIComponent(query)}&per_page=1&client_id=${clientId}`
+
+      try {
+        const response = await fetch(url)
+        if (!response.ok) {
+          throw new Error('Failed to fetch image')
+        }
+        const data = await response.json()
+        if (data.results && data.results.length > 0) {
+          setOutfitImage(data.results[0].urls.regular)
+        } else {
+          setOutfitImage("/placeholder.svg")
+        }
+      } catch (error) {
+        console.error("Error fetching Unsplash image:", error)
+        setOutfitImage("/placeholder.svg")
+      }
+    }
+
+    fetchUnsplashImage()
+  }, [searchParams, style])
 
   const recommendation = outfitRecommendations[style]
 
@@ -217,14 +238,67 @@ export default function ResultPage() {
 
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-br from-indigo-50 to-gray-100 dark:from-gray-900/80 dark:to-gray-800 bg-[url('/subtle-pattern.png')] bg-fixed">
-      <header className="px-4 lg:px-6 h-16 flex items-center backdrop-blur-lg bg-white/70 dark:bg-gray-900/70 border-b border-gray-200/50 dark:border-gray-800/50 shadow-sm sticky top-0 z-10">
-        <Link className="flex items-center gap-2 font-bold text-lg" href="/">
-          <Shirt className="h-6 w-6 text-indigo-600" />
-          <span className="text-indigo-600">OutfitExpert</span>
+      <header className="px-4 lg:px-8 h-16 flex items-center justify-between border-b bg-white shadow-lg sticky top-0 z-50">
+        <Link className="flex items-center gap-2 font-bold text-xl tracking-tight" href="/">
+          <Shirt className="h-7 w-7 text-indigo-600" />
+          <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+            OutfitExpert
+          </span>
         </Link>
-        <div className="ml-auto">
-          <ModeToggle />
-        </div>
+
+        <button className="sm:hidden block text-indigo-600" onClick={toggleMenu}>
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+
+        <nav className="hidden sm:flex ml-auto gap-4">
+          <Link className="text-sm font-semibold hover:bg-indigo-100 px-3 py-2 rounded-lg transition-all duration-300" href="/sistem-pakar">
+            Beranda
+          </Link>
+          <Link className="text-sm font-semibold hover:bg-indigo-100 px-3 py-2 rounded-lg transition-all duration-300" href="/about">
+            Tentang
+          </Link>
+        </nav>
+        {menuOpen && (
+          <div
+            className="absolute top-16 right-4 w-40 bg-white rounded-lg shadow-lg py-2 z-50"
+            style={{
+              animation: 'fadeInDown 0.3s ease-out both',
+              opacity: 0,
+              transform: 'translateY(-0.5rem)',
+              animationFillMode: 'forwards',
+            }}
+          >
+            <style>
+              {`
+                @keyframes fadeInDown {
+                  from {
+                    opacity: 0;
+                    transform: translateY(-0.5rem);
+                  }
+                  to {
+                    opacity: 1;
+                    transform: translateY(0);
+                  }
+                }
+              `}
+            </style>
+
+            <Link
+              href="/sistem-pakar"
+              className="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-100 rounded-md transition"
+            >
+              Beranda
+            </Link>
+            <Link
+              href="/about"
+              className="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-100 rounded-md transition"
+            >
+              Tentang
+            </Link>
+          </div>
+        )}
       </header>
       <main className="flex-1 p-4 sm:p-6 md:p-8">
         <div className="max-w-4xl mx-auto">
@@ -314,11 +388,13 @@ export default function ResultPage() {
                       <div className="space-y-6">
                         <div className="flex justify-center">
                           <Image
-                            src={recommendation.image || "/placeholder.svg"}
+                            src={outfitImage}
                             alt={`${recommendation.title} outfit example`}
                             width={400}
                             height={300}
                             className="rounded-lg shadow-md w-full md:w-auto h-auto"
+                            placeholder="blur"
+                            blurDataURL="/placeholder.svg"
                           />
                         </div>
                         <div>

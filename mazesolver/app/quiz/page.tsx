@@ -18,7 +18,7 @@ const questions = [
   {
     id: 1,
     question: "Apa jenis acara yang akan Anda hadiri?",
-    illustration: "/placeholder.svg?height=200&width=200",
+    illustration: "/logo1.png?height=200&width=400",
     options: [
       { id: "casual_event", label: "Hangout dengan teman", icon: <ThumbsUp className="h-6 w-6" /> },
       { id: "formal_event", label: "Acara kantor atau formal", icon: "💼" },
@@ -30,7 +30,7 @@ const questions = [
   {
     id: 2,
     question: "Bagaimana cuaca saat ini?",
-    illustration: "/placeholder.svg?height=200&width=200",
+    illustration: "/logo2.png?height=200&width=400",
     options: [
       { id: "hot_weather", label: "Panas", icon: "☀️" },
       { id: "cold_weather", label: "Dingin", icon: "❄️" },
@@ -212,18 +212,74 @@ export default function QuizPage() {
 
   const currentTheme = questionThemes[currentQuestion % questionThemes.length]
 
+   const [menuOpen, setMenuOpen] = useState(false);
+   const toggleMenu = () => setMenuOpen(!menuOpen);
+
   return (
     <div className={`flex flex-col min-h-screen bg-gradient-to-br ${currentTheme.bg} bg-[url('/subtle-pattern.png')] bg-fixed transition-colors duration-500`}>
-      <header className="px-4 lg:px-6 h-16 flex items-center backdrop-blur-lg bg-white/70 dark:bg-gray-900/70 border-b border-gray-200/50 dark:border-gray-800/50 shadow-sm sticky top-0 z-10">
-        <Link className="flex items-center gap-2 font-bold text-lg" href="/">
-          <motion.div whileHover={{ rotate: 360 }} transition={{ duration: 0.5 }}>
-            <Shirt className="h-6 w-6 text-indigo-600" />
-          </motion.div>
-          <span className="text-indigo-600">OutfitExpert</span>
+       <header className="px-4 lg:px-8 h-16 flex items-center justify-between border-b bg-white shadow-lg sticky top-0 z-50">
+        <Link className="flex items-center gap-2 font-bold text-xl tracking-tight" href="/">
+          <Shirt className="h-7 w-7 text-indigo-600" />
+          <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+            OutfitExpert
+          </span>
         </Link>
-        <div className="ml-auto">
-          <ModeToggle />
-        </div>
+
+        <button className="sm:hidden block text-indigo-600" onClick={toggleMenu}>
+          {/* icon hamburger */}
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+
+        <nav className="hidden sm:flex ml-auto gap-4">
+          <Link className="text-sm font-semibold hover:bg-indigo-100 px-3 py-2 rounded-lg transition-all duration-300" href="/sistem-pakar">
+            Beranda
+          </Link>
+          <Link className="text-sm font-semibold hover:bg-indigo-100 px-3 py-2 rounded-lg transition-all duration-300" href="/about">
+            Tentang
+          </Link>
+        </nav>
+        {menuOpen && (
+  <div
+    className="absolute top-16 right-4 w-40 bg-white rounded-lg shadow-lg py-2 z-50"
+    style={{
+      animation: 'fadeInDown 0.3s ease-out both',
+      opacity: 0,
+      transform: 'translateY(-0.5rem)',
+      animationFillMode: 'forwards',
+    }}
+  >
+    <style>
+      {`
+        @keyframes fadeInDown {
+          from {
+            opacity: 0;
+            transform: translateY(-0.5rem);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+      `}
+    </style>
+
+    <Link
+      href="/sistem-pakar"
+      className="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-100 rounded-md transition"
+    >
+      Beranda
+    </Link>
+    <Link
+      href="/about"
+      className="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-100 rounded-md transition"
+    >
+      Tentang
+    </Link>
+  </div>
+)}
+
       </header>
 
       <main className="flex-1 flex items-center justify-center p-4 sm:p-6 md:p-8">
@@ -269,15 +325,15 @@ export default function QuizPage() {
                     <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white mb-4 leading-tight">
                       {questions[currentQuestion].question}
                     </h2>
-                    <div className="flex justify-center mb-6">
+                    {/* <div className="flex justify-center mb-6">
                       <Image
                         src={questions[currentQuestion].illustration || "/placeholder.svg"}
                         alt={questions[currentQuestion].question}
-                        width={180}
+                        width={300}
                         height={180}
                         className="rounded-xl shadow-md sm:w-[200px] sm:h-[200px]"
                       />
-                    </div>
+                    </div> */}
                   </div>
                 </motion.div>
               </AnimatePresence>
